@@ -1,0 +1,3 @@
+*.fig
+.env.local
+node_modules
