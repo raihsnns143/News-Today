@@ -53,18 +53,7 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-gray-50 text-gray-800">
-
-      {/* 🏠 Hero Section */}
-      <section className="text-white py-8 text-center bg-gradient-to-r from-[#D63460] to-[#FAD6DE]">
-        <div className="max-w-3xl mx-auto px-6">
-          <h1 className="text-5xl font-bold mb-4">Welcome to News Today</h1>
-          <p className="text-lg leading-relaxed">
-            Trusted, Transparent & Timely — Bringing the world closer through
-            authentic journalism.
-          </p>
-        </div>
-      </section>
+    <div className="bg-gray-50 text-gray-800"> 
 
       {/* 📰 Latest News Carousel */}
       <section className="py-16 px-6 max-w-5xl mx-auto">
