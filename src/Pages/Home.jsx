@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+// src/pages/Home.jsx  (or wherever your Home component lives)
+import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import NewsCard from "../Components/NewsCard";
 
 const Home = () => {
@@ -7,41 +8,69 @@ const Home = () => {
   const [featuredNews, setFeaturedNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    fetch("/dist/news.json") // 🔹 Make sure your file is here (or /news.json)
-      .then((res) => res.json())
+    // fetch from public folder (root)
+    fetch("/news.json")
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
       .then((data) => {
-        // 🔹 Trending News
-        const trending = data.filter((n) => n.rating?.badge === "trending");
+        // trending / featured
+        const trending = Array.isArray(data)
+          ? data.filter((n) => n?.rating?.badge === "trending")
+          : [];
         setFeaturedNews(trending);
 
-        // 🔹 Latest News sorted by published_date descending
-        const latest = [...data]
-          .sort(
-            (a, b) =>
-              new Date(b.author?.published_date) -
-              new Date(a.author?.published_date)
-          )
+        // latest sorted by published_date (safely)
+        const items = Array.isArray(data) ? data : [];
+        const latest = [...items]
+          .sort((a, b) => {
+            const da = new Date(a?.author?.published_date || 0).getTime();
+            const db = new Date(b?.author?.published_date || 0).getTime();
+            return db - da;
+          })
           .slice(0, 5);
         setLatestNews(latest);
+
+        // reset current slide if needed
+        setCurrentSlide(0);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error("Failed to load news.json:", err);
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  // 🔹 Carousel navigation
+  // carousel next/prev
   const prevSlide = () =>
-    setCurrentSlide((prev) => (prev === 0 ? latestNews.length - 1 : prev - 1));
+    setCurrentSlide((prev) =>
+      latestNews.length ? (prev === 0 ? latestNews.length - 1 : prev - 1) : 0
+    );
   const nextSlide = () =>
     setCurrentSlide((prev) =>
-      prev === latestNews.length - 1 ? 0 : prev + 1
+      latestNews.length ? (prev === latestNews.length - 1 ? 0 : prev + 1) : 0
     );
 
-  // 🔹 Auto-slide every 5s
+  // Auto-slide every 5s (cleans up properly)
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
-    return () => clearInterval(interval);
+    // clear previous interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    // only set interval if there are slides
+    if (latestNews.length > 1) {
+      intervalRef.current = setInterval(() => {
+        setCurrentSlide((prev) =>
+          prev === latestNews.length - 1 ? 0 : prev + 1
+        );
+      }, 5000);
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [latestNews]);
 
   if (loading) {
@@ -53,15 +82,14 @@ const Home = () => {
   }
 
   return (
-    <div className="bg-gray-50 text-gray-800"> 
-
-      {/* 📰 Latest News Carousel */}
+    <div className="bg-gray-50 text-gray-800">
+      {/* Latest News Carousel */}
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
           Latest News
         </h2>
 
-        {latestNews.length > 0 && (
+        {latestNews.length > 0 ? (
           <div className="relative">
             <div className="overflow-hidden rounded-xl shadow-lg">
               <div
@@ -79,7 +107,7 @@ const Home = () => {
                         news.image_url ||
                         "/default-news.jpg"
                       }
-                      alt={news.title}
+                      alt={news.title || "news"}
                       className="w-full h-64 object-cover rounded-t-xl"
                     />
                     <div className="p-6">
@@ -87,7 +115,7 @@ const Home = () => {
                         {news.title}
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        {news.details?.slice(0, 120)}...
+                        {news.details ? `${news.details.slice(0, 120)}...` : ""}
                       </p>
                       <Link
                         to={`/news-details/${news.id}`}
@@ -101,24 +129,28 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Carousel Controls */}
+            {/* Controls */}
             <button
               onClick={prevSlide}
               className="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+              aria-label="previous"
             >
               &#10094;
             </button>
             <button
               onClick={nextSlide}
               className="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+              aria-label="next"
             >
               &#10095;
             </button>
           </div>
+        ) : (
+          <p className="text-center text-gray-500">No latest news available.</p>
         )}
       </section>
 
-      {/* 🔥 Trending News */}
+      {/* Trending */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
@@ -126,9 +158,7 @@ const Home = () => {
           </h2>
           <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredNews.length > 0 ? (
-              featuredNews.map((news) => (
-                <NewsCard key={news.id} news={news} />
-              ))
+              featuredNews.map((news) => <NewsCard key={news.id} news={news} />)
             ) : (
               <p className="text-center text-gray-500 col-span-full">
                 No trending news available.
@@ -138,7 +168,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 🗂️ Categories Section */}
+      {/* Categories */}
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
           Explore Categories
@@ -161,7 +191,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ⚙️ Footer */}
       <footer className="bg-gray-900 text-white py-6 text-center">
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
