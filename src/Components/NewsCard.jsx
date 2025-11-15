@@ -2,84 +2,79 @@ import { useState } from "react";
 import { CiBookmark } from "react-icons/ci";
 import { FaStar, FaEye } from "react-icons/fa";
 import { IoShareSocialOutline } from "react-icons/io5";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
-const NewsCard = ({
-  news: {
-    id,
-    title,
-    author,
-    rating,
-    total_view,
-    thumbnail_url,
-    details,
-    tags,
-  },
-}) => {
+const NewsCard = ({ news }) => {
+  const { id, title, author, rating, total_view, thumbnail_url, details, tags } = news;
+
   const { name, img, published_date } = author;
-  const { number, badge } = rating;
+  const { number, badge } = rating || {};
 
-  // See more toggle state
   const [seeMore, setSeeMore] = useState(false);
 
-  // rating star
   const stars = Array.from({ length: Math.round(number) }, (_, i) => i);
 
   return (
-    <div className="card bg-base-100 shadow-xl border border-gray-200 hover:shadow-2xl transition duration-300">
-      {/* Author Info */}
-      <div className="flex justify-between pr-4 bg-gray-100">
-        <div className="flex items-center gap-3 p-4 border-b border-gray-100">
-        <img
-          src={img}
-          alt={name}
-          className="w-10 h-10 rounded-full object-cover"
-        />
+    <div className="card bg-white shadow-md border rounded-xl overflow-hidden transition hover:shadow-xl">
+
+      {/* --- Author Info --- */}
+      <div className="flex justify-between items-center p-3 bg-gray-100">
+        <div className="flex items-center gap-3">
+          <img
+            src={img}
+            alt={name}
+            className="w-10 h-10 rounded-full object-cover"
+          />
           <div>
-            <h2 className="font-semibold text-gray-800">{name}</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="font-semibold text-gray-800 text-sm">{name}</h2>
+            <p className="text-xs text-gray-500">
               {new Date(published_date).toDateString()}
             </p>
           </div>
-      </div>
-      <button className="flex gap-1 items-center">
-            <CiBookmark />
-            <IoShareSocialOutline />
-          </button>
+        </div>
+
+        <button className="flex gap-2 text-xl text-gray-700 pr-2">
+          <CiBookmark className="cursor-pointer" />
+          <IoShareSocialOutline className="cursor-pointer" />
+        </button>
       </div>
 
       {/* Thumbnail */}
-      <figure>
+      <figure className="w-full">
         <img
           src={thumbnail_url}
           alt={title}
-          className="w-full h-56 object-cover"
+          className="w-full h-48 sm:h-56 md:h-52 object-cover"
         />
       </figure>
 
       {/* Content */}
-      <div className="card-body">
-        <h2 className="card-title text-lg font-bold text-gray-800">
+      <div className="p-4">
+
+        {/* Title */}
+        <h2 className="text-lg font-bold text-gray-900 leading-snug mb-2">
           {title}
           {badge && (
-            <div className="badge badge-secondary capitalize">{badge}</div>
+            <span className="badge badge-secondary ml-2 capitalize">
+              {badge}
+            </span>
           )}
         </h2>
 
-        {/* Details + See More (inline) */}
-        <p className="text-gray-600 text-sm leading-relaxed">
-          {seeMore ? details : details.slice(0, 180) + "... "}
-          <Link to={`/news-details/${id}`}
+        {/* Details */}
+        <p className="text-gray-600 text-sm">
+          {seeMore ? details : details.slice(0, 160) + " "}
+          <button
             onClick={() => setSeeMore(!seeMore)}
             className="text-blue-600 font-medium hover:underline"
           >
             {seeMore ? "See Less" : "See More"}
-          </Link>
+          </button>
         </p>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mt-3">
-          {tags.map((tag, i) => (
+          {tags?.map((tag, i) => (
             <span key={i} className="badge badge-outline text-xs">
               #{tag}
             </span>
@@ -87,19 +82,18 @@ const NewsCard = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center mt-4 border-t pt-3 text-sm text-gray-600">
+        <div className="flex justify-between items-center mt-4 border-t pt-3 text-sm">
           <div className="flex items-center gap-2">
-            {/* ⭐ dynamic stars */}
-            <div className="flex text-yellow-500">
+            <div className="flex text-yellow-500 text-sm">
               {stars.map((_, i) => (
                 <FaStar key={i} />
               ))}
             </div>
-            <span className="font-medium">{number}</span>
+            <span>{number}</span>
           </div>
 
-          <div className="flex items-center gap-1">
-            <FaEye className="text-gray-700" />
+          <div className="flex items-center gap-1 text-gray-600">
+            <FaEye />
             <span>{total_view}</span>
           </div>
         </div>

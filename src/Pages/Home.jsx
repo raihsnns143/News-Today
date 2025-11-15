@@ -1,179 +1,185 @@
-// src/pages/Home.jsx  (or wherever your Home component lives)
+'use client';
+
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import NewsCard from "../Components/NewsCard";
 
 const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const [featuredNews, setFeaturedNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slidesPerView, setSlidesPerView] = useState(1);
   const intervalRef = useRef(null);
 
+  const updateSlidesPerView = () => {
+    if (window.innerWidth >= 1024) setSlidesPerView(3);
+    else if (window.innerWidth >= 640) setSlidesPerView(2);
+    else setSlidesPerView(1);
+  };
+
   useEffect(() => {
-    // fetch from public folder (root)
+    updateSlidesPerView();
+    window.addEventListener("resize", updateSlidesPerView);
+    return () => window.removeEventListener("resize", updateSlidesPerView);
+  }, []);
+
+  useEffect(() => {
     fetch("/news.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        // trending / featured
-        const trending = Array.isArray(data)
-          ? data.filter((n) => n?.rating?.badge === "trending")
-          : [];
+        const trending = data.filter((n) => n?.rating?.badge === "trending");
         setFeaturedNews(trending);
 
-        // latest sorted by published_date (safely)
-        const items = Array.isArray(data) ? data : [];
-        const latest = [...items]
-          .sort((a, b) => {
-            const da = new Date(a?.author?.published_date || 0).getTime();
-            const db = new Date(b?.author?.published_date || 0).getTime();
-            return db - da;
-          })
-          .slice(0, 5);
+        const latest = [...data]
+          .sort(
+            (a, b) =>
+              new Date(b?.author?.published_date) -
+              new Date(a?.author?.published_date)
+          )
+          .slice(0, 10);
         setLatestNews(latest);
-
-        // reset current slide if needed
         setCurrentSlide(0);
-      })
-      .catch((err) => {
-        console.error("Failed to load news.json:", err);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // carousel next/prev
   const prevSlide = () =>
     setCurrentSlide((prev) =>
-      latestNews.length ? (prev === 0 ? latestNews.length - 1 : prev - 1) : 0
-    );
-  const nextSlide = () =>
-    setCurrentSlide((prev) =>
-      latestNews.length ? (prev === latestNews.length - 1 ? 0 : prev + 1) : 0
+      prev === 0 ? latestNews.length - slidesPerView : prev - 1
     );
 
-  // Auto-slide every 5s (cleans up properly)
+  const nextSlide = () =>
+    setCurrentSlide((prev) =>
+      prev >= latestNews.length - slidesPerView ? 0 : prev + 1
+    );
+
   useEffect(() => {
-    // clear previous interval
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    // only set interval if there are slides
-    if (latestNews.length > 1) {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (latestNews.length > slidesPerView) {
       intervalRef.current = setInterval(() => {
         setCurrentSlide((prev) =>
-          prev === latestNews.length - 1 ? 0 : prev + 1
+          prev >= latestNews.length - slidesPerView ? 0 : prev + 1
         );
       }, 5000);
     }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [latestNews]);
+    return () => intervalRef.current && clearInterval(intervalRef.current);
+  }, [latestNews, slidesPerView]);
 
-  if (loading) {
+  if (loading)
     return (
       <div className="min-h-screen flex justify-center items-center">
         <span className="loading loading-spinner text-primary"></span>
       </div>
     );
-  }
 
   return (
     <div className="bg-gray-50 text-gray-800">
+
       {/* Latest News Carousel */}
-      <section className="py-16 px-6 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
+      <section className="py-8 px-4 sm:px-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-center text-[#D63460]">
           Latest News
         </h2>
-
-        {latestNews.length > 0 ? (
-          <div className="relative">
-            <div className="overflow-hidden rounded-xl shadow-lg">
+        <div className="relative w-full overflow-hidden rounded-xl shadow-md">
+          <div
+            className="flex transition-transform duration-500"
+            style={{
+              transform: `translateX(-${(currentSlide * 100) / slidesPerView}%)`,
+              width: `${(latestNews.length / slidesPerView) * 100}%`,
+            }}
+          >
+            {latestNews.map((news) => (
               <div
-                className="flex transition-transform duration-500"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                key={news.id}
+                className="flex-shrink-0 p-2"
+                style={{ width: `${100 / slidesPerView}%` }}
               >
-                {latestNews.map((news) => (
-                  <div
-                    key={news.id}
-                    className="min-w-full bg-white rounded-xl shadow-md"
-                  >
-                    <img
-                      src={
-                        news.thumbnail_url ||
-                        news.image_url ||
-                        "/default-news.jpg"
-                      }
-                      alt={news.title || "news"}
-                      className="w-full h-64 object-cover rounded-t-xl"
-                    />
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2">
-                        {news.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        {news.details ? `${news.details.slice(0, 120)}...` : ""}
-                      </p>
-                      <Link
-                        to={`/news-details/${news.id}`}
-                        className="text-[#D63460] font-semibold mt-2 inline-block hover:underline"
-                      >
-                        Read More →
-                      </Link>
-                    </div>
+                <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition flex flex-col">
+                  <img
+                    src={news.thumbnail_url || news.image_url || "/default-news.jpg"}
+                    alt={news.title}
+                    className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover"
+                  />
+                  <div className="p-4 flex flex-col flex-1">
+                    <h3 className="text-lg sm:text-xl font-semibold mb-2 line-clamp-2">
+                      {news.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-3">
+                      {news.details?.slice(0, 120)}...
+                    </p>
+                    <Link
+                      to={`/news-details/${news.id}`}
+                      className="text-[#D63460] font-semibold hover:underline mt-auto"
+                    >
+                      Read More →
+                    </Link>
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-
-            {/* Controls */}
-            <button
-              onClick={prevSlide}
-              className="absolute top-1/2 left-2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
-              aria-label="previous"
-            >
-              &#10094;
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute top-1/2 right-2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
-              aria-label="next"
-            >
-              &#10095;
-            </button>
+            ))}
           </div>
-        ) : (
-          <p className="text-center text-gray-500">No latest news available.</p>
-        )}
-      </section>
 
-      {/* Trending */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
-            Trending News
-          </h2>
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredNews.length > 0 ? (
-              featuredNews.map((news) => <NewsCard key={news.id} news={news} />)
-            ) : (
-              <p className="text-center text-gray-500 col-span-full">
-                No trending news available.
-              </p>
-            )}
-          </div>
+          {/* Carousel Controls */}
+          <button
+            onClick={prevSlide}
+            className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          >
+            ❮
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute top-1/2 right-2 sm:right-4 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          >
+            ❯
+          </button>
         </div>
       </section>
 
+      {/* Trending News */}
+      <section className="py-8 px-4 sm:px-6 max-w-6xl mx-auto mt-8 space-y-6">
+        <h2 className="text-2xl sm:text-3xl font-semibold text-center text-[#D63460]">
+          Trending News
+        </h2>
+        {featuredNews.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {featuredNews.map((news) => (
+              <div
+                key={news.id}
+                className="flex flex-col sm:flex-row bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition"
+              >
+                <img
+                  src={news.thumbnail_url || news.image_url || "/default-news.jpg"}
+                  alt={news.title}
+                  className="w-full sm:w-1/3 h-48 sm:h-56 md:h-64 lg:h-72 object-cover"
+                />
+                <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2 line-clamp-2">
+                    {news.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-3">
+                    {news.details?.slice(0, 150)}...
+                  </p>
+                  <Link
+                    to={`/news-details/${news.id}`}
+                    className="text-[#D63460] font-semibold hover:underline mt-auto"
+                  >
+                    Read More →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No trending news available.</p>
+        )}
+      </section>
+
       {/* Categories */}
-      <section className="py-16 px-6 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-semibold mb-8 text-center text-[#D63460]">
+      <section className="py-12 px-4 sm:px-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-semibold mb-8 text-center text-[#D63460]">
           Explore Categories
         </h2>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {[
             { name: "Politics", color: "#FAD6DE" },
             { name: "Sports", color: "#D63460" },
@@ -191,7 +197,8 @@ const Home = () => {
         </div>
       </section>
 
-      <footer className="bg-gray-900 text-white py-6 text-center">
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-6 text-center mt-10">
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
     </div>
