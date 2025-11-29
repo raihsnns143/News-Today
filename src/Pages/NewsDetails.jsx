@@ -23,15 +23,14 @@ const NewsDetails = () => {
             <header>
                 <Header></Header>
             </header>
-            <main className='container mx-auto grid grid-cols-12 gap-5'>
-                <section className='col-span-9'>
+            <main className='container mx-auto grid grid-cols-1 md:grid-cols-12 gap-5'>
+                <section className='md:col-span-9 col-span-1'>
                     <h2 className='font-bold mb-5'>News Details</h2>
                     <NewsDetailsCard news={news}></NewsDetailsCard>
                 </section>
-                <aside className='col-span-3 sticky top-0 h-fit'>
+                <aside className='md:col-span-3 col-span-1 sticky md:top-0 h-fit'>
                     <RightAside></RightAside>
                 </aside>
-
             </main>
         </div>
     );

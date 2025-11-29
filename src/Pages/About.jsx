@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 
 const About = () => {
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    alert(`Thank you, ${contactForm.name}! We'll contact you at ${contactForm.email}`);
+    setContactForm({ name: "", email: "", message: "" });
+    setShowContactModal(false);
+  };
+
   const teamMembers = [
     { name: "Raihan", role: "Editor-in-Chief", image: "./src/assets/team1.jpg" },
     { name: "Robiul", role: "Senior Journalist", image: "./src/assets/team2.jpg" },
@@ -121,7 +131,7 @@ const About = () => {
             Contact our editorial team to publish your authentic news and
             inspiring stories.
           </p>
-          <button className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          <button onClick={() => setShowContactModal(true)} className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
             Contact Us
           </button>
         </div>
@@ -131,6 +141,55 @@ const About = () => {
       <footer className="bg-gray-900 text-white py-6 text-center">
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
+
+      {/* Contact Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
+          <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
+            <h2 className="text-2xl font-semibold mb-4" style={{ color: "#D63460" }}>
+              Contact Us
+            </h2>
+            <form onSubmit={handleContactSubmit} className="space-y-4">
+              <input
+                type="text"
+                value={contactForm.name}
+                onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                className="w-full border p-3 rounded"
+                placeholder="Your Name"
+                required
+              />
+              <input
+                type="email"
+                value={contactForm.email}
+                onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                className="w-full border p-3 rounded"
+                placeholder="Email"
+                required
+              />
+              <textarea
+                value={contactForm.message}
+                onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                className="w-full border p-3 rounded"
+                rows="4"
+                placeholder="Your Message"
+                required
+              ></textarea>
+              <button
+                type="submit"
+                className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
+              >
+                Send Message
+              </button>
+            </form>
+            <button
+              onClick={() => setShowContactModal(false)}
+              className="absolute top-2 right-3 text-xl font-bold text-gray-700"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

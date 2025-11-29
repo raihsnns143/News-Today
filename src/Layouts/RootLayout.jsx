@@ -1,7 +1,6 @@
 import React from "react";
 import { Outlet, useNavigation } from "react-router";
 import Header from "../Components/Header";
-import LatesNews from "../Components/LatesNews";
 import Navber from "../Components/Navber";
 import LeftAside from "../Components/HomeLayout/LeftAside";
 import RightAside from "../Components/HomeLayout/RightAside";
@@ -14,21 +13,18 @@ const RootLayout = () => {
     <div>
       <header>
         <Header></Header>
-        <section className="container mx-auto my-3">
-          <LatesNews></LatesNews>
-        </section>
         <nav className="container mx-auto my-3">
           <Navber></Navber>
         </nav>
       </header>
-      <main className="container mx-auto my-3 grid grid-cols-12 gap-5">
-        <aside className="left-side col-span-3 sticky top-0 h-fit">
+       <main className="container mx-auto my-3 grid grid-cols-1 md:grid-cols-12 gap-5">
+        <aside className="left-side md:col-span-3 col-span-1 sticky md:top-0 h-fit">
           <LeftAside></LeftAside>
         </aside>
-        <section className="main-side col-span-6">
-          {state == "loading" ? <Loading></Loading> : <Outlet></Outlet>}
+        <section className="main-side md:col-span-6 col-span-1">
+          <Outlet></Outlet>
         </section>
-        <aside className="right-side col-span-3 sticky top-0 h-fit">
+        <aside className="right-side md:col-span-3 col-span-1 hidden md:block sticky md:top-0 h-fit">
           <RightAside></RightAside>
         </aside>
       </main>

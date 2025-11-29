@@ -3,6 +3,8 @@ import React, { useState } from "react";
 const Career = () => {
   const [open, setOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState("");
+  const [cvOpen, setCvOpen] = useState(false);
+  const [cvForm, setCvForm] = useState({ name: "", email: "", file: null });
 
   const jobs = [
     { role: "Junior News Reporter", type: "Full Time", location: "Dhaka" },
@@ -83,7 +85,7 @@ const Career = () => {
         <h2 className="text-3xl font-semibold mb-4">Didn’t find a role matching you?</h2>
         <p className="mb-6">Send your CV — we always welcome talented people.</p>
 
-        <button className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+        <button onClick={() => setCvOpen(true)} className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
           Send CV
         </button>
       </section>
@@ -93,7 +95,7 @@ const Career = () => {
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
 
-      {/* Modal */}
+      {/* Apply Modal */}
       {open && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
           <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
@@ -104,25 +106,32 @@ const Career = () => {
               Apply For {selectedJob}
             </h2>
 
-            <form className="space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              alert(`Application submitted for ${selectedJob}! We'll review and contact you.`);
+              setOpen(false);
+            }} className="space-y-4">
               <input
                 className="w-full border p-3 rounded"
                 placeholder="Your Name"
+                required
               />
               <input
                 type="email"
                 className="w-full border p-3 rounded"
                 placeholder="Email"
+                required
               />
               <textarea
                 className="w-full border p-3 rounded"
                 rows="3"
                 placeholder="Short Message"
+                required
               ></textarea>
-              <input type="file" className="w-full border p-3 rounded" />
+              <input type="file" className="w-full border p-3 rounded" required />
 
               <button
-                type="button"
+                type="submit"
                 className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
               >
                 Submit Application
@@ -131,6 +140,59 @@ const Career = () => {
 
             <button
               onClick={() => setOpen(false)}
+              className="absolute top-2 right-3 text-xl font-bold text-gray-700"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Send CV Modal */}
+      {cvOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
+          <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
+            <h2
+              className="text-2xl font-semibold mb-4"
+              style={{ color: "#D63460" }}
+            >
+              Send Your CV
+            </h2>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              alert(`CV submitted! We'll review your profile and get back to you.`);
+              setCvOpen(false);
+              setCvForm({ name: "", email: "", file: null });
+            }} className="space-y-4">
+              <input
+                type="text"
+                value={cvForm.name}
+                onChange={(e) => setCvForm({ ...cvForm, name: e.target.value })}
+                className="w-full border p-3 rounded"
+                placeholder="Your Name"
+                required
+              />
+              <input
+                type="email"
+                value={cvForm.email}
+                onChange={(e) => setCvForm({ ...cvForm, email: e.target.value })}
+                className="w-full border p-3 rounded"
+                placeholder="Email"
+                required
+              />
+              <input type="file" className="w-full border p-3 rounded" required />
+
+              <button
+                type="submit"
+                className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
+              >
+                Send CV
+              </button>
+            </form>
+
+            <button
+              onClick={() => setCvOpen(false)}
               className="absolute top-2 right-3 text-xl font-bold text-gray-700"
             >
               ×

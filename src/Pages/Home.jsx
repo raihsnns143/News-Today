@@ -5,201 +5,226 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
-  const [featuredNews, setFeaturedNews] = useState([]);
+  const [trendingNews, setTrendingNews] = useState([]);
+  const [breakingNews, setBreakingNews] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [slidesPerView, setSlidesPerView] = useState(1);
-  const intervalRef = useRef(null);
-
-  const updateSlidesPerView = () => {
-    if (window.innerWidth >= 1024) setSlidesPerView(3);
-    else if (window.innerWidth >= 640) setSlidesPerView(2);
-    else setSlidesPerView(1);
-  };
-
-  useEffect(() => {
-    updateSlidesPerView();
-    window.addEventListener("resize", updateSlidesPerView);
-    return () => window.removeEventListener("resize", updateSlidesPerView);
-  }, []);
 
   useEffect(() => {
     fetch("/news.json")
       .then((res) => res.json())
       .then((data) => {
-        const trending = data.filter((n) => n?.rating?.badge === "trending");
-        setFeaturedNews(trending);
+        // Breaking News - First item
+        if (data.length > 0) {
+          setBreakingNews(data[0]);
+        }
 
+        // Trending News - items with trending badge
+        const trending = data.filter((n) => n?.rating?.badge === "trending");
+        setTrendingNews(trending);
+
+        // Latest News - sorted by date
         const latest = [...data]
           .sort(
             (a, b) =>
               new Date(b?.author?.published_date) -
               new Date(a?.author?.published_date)
           )
-          .slice(0, 10);
+          .slice(0, 20);
         setLatestNews(latest);
-        setCurrentSlide(0);
       })
       .finally(() => setLoading(false));
   }, []);
 
-  const prevSlide = () =>
-    setCurrentSlide((prev) =>
-      prev === 0 ? latestNews.length - slidesPerView : prev - 1
-    );
-
-  const nextSlide = () =>
-    setCurrentSlide((prev) =>
-      prev >= latestNews.length - slidesPerView ? 0 : prev + 1
-    );
-
-  useEffect(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    if (latestNews.length > slidesPerView) {
-      intervalRef.current = setInterval(() => {
-        setCurrentSlide((prev) =>
-          prev >= latestNews.length - slidesPerView ? 0 : prev + 1
-        );
-      }, 5000);
-    }
-    return () => intervalRef.current && clearInterval(intervalRef.current);
-  }, [latestNews, slidesPerView]);
-
   if (loading)
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <span className="loading loading-spinner text-primary"></span>
+      <div className="min-h-screen flex justify-center items-center bg-white">
+        <span className="loading loading-spinner loading-lg text-gray-800"></span>
       </div>
     );
 
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="bg-white text-gray-900">
+      {/* BREAKING NEWS BANNER */}
+      {breakingNews && (
+        <section className="bg-black text-white py-2 px-3 md:py-3 md:px-6 sticky top-[72px] z-30 md:relative">
+          <div className="max-w-7xl mx-auto flex items-center gap-2 md:gap-4">
+            <span className="bg-red-600 text-white px-2 py-0.5 rounded font-bold text-xs animate-pulse flex-shrink-0">
+              LIVE
+            </span>
+            <Link
+              to={`/news-details/${breakingNews.id}`}
+              className="flex-1 line-clamp-1 hover:underline transition text-xs md:text-base font-medium"
+            >
+              {breakingNews.title}
+            </Link>
+          </div>
+        </section>
+      )}
 
-      {/* Latest News Carousel */}
-      <section className="py-8 px-4 sm:px-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-center text-[#D63460]">
-          Latest News
-        </h2>
-        <div className="relative w-full overflow-hidden rounded-xl shadow-md">
-          <div
-            className="flex transition-transform duration-500"
-            style={{
-              transform: `translateX(-${(currentSlide * 100) / slidesPerView}%)`,
-              width: `${(latestNews.length / slidesPerView) * 100}%`,
-            }}
+      {/* MAIN CONTENT - MOBILE OPTIMIZED */}
+      <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-6">
+        {/* FEATURED STORY - FULL WIDTH ON MOBILE */}
+        {breakingNews && (
+          <Link
+            to={`/news-details/${breakingNews.id}`}
+            className="group relative overflow-hidden rounded-lg mb-4 md:mb-8 block"
           >
-            {latestNews.map((news) => (
-              <div
+            <div className="relative h-48 md:h-96 overflow-hidden bg-gray-300">
+              <img
+                src={breakingNews.thumbnail_url || breakingNews.image_url || "/default-news.jpg"}
+                alt={breakingNews.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                <h2 className="text-lg md:text-4xl font-bold mb-2 md:mb-3 line-clamp-3 group-hover:underline">
+                  {breakingNews.title}
+                </h2>
+                <p className="text-xs md:text-sm opacity-90">
+                  {new Date(breakingNews.author?.published_date).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
+
+        {/* SECONDARY STORIES - STACKED ON MOBILE */}
+        <div className="space-y-4 mb-6 md:mb-8 pb-4 md:pb-8 border-b border-gray-300">
+          {trendingNews.slice(0, 3).map((news) => (
+            <Link
+              key={news.id}
+              to={`/news-details/${news.id}`}
+              className="group flex gap-3 md:gap-4 hover:opacity-75 transition"
+            >
+              <img
+                src={news.thumbnail_url || news.image_url || "/default-news.jpg"}
+                alt={news.title}
+                className="w-24 md:w-32 h-20 md:h-24 object-cover rounded flex-shrink-0 group-hover:scale-105 transition duration-300"
+              />
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-bold text-sm md:text-base line-clamp-2 group-hover:underline mb-1">
+                    {news.title}
+                  </h3>
+                  <p className="text-xs text-gray-600 line-clamp-1 md:line-clamp-2">
+                    {news.details?.slice(0, 60)}...
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(news.author?.published_date).toLocaleDateString()}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* NEWS GRID - RESPONSIVE */}
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold mb-4">Latest News</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+            {latestNews.slice(0, 8).map((news) => (
+              <Link
                 key={news.id}
-                className="flex-shrink-0 p-2"
-                style={{ width: `${100 / slidesPerView}%` }}
+                to={`/news-details/${news.id}`}
+                className="group flex flex-col hover:opacity-75 transition"
               >
-                <div className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition flex flex-col">
+                <div className="relative overflow-hidden rounded h-40 md:h-48 mb-3 bg-gray-200">
                   <img
                     src={news.thumbnail_url || news.image_url || "/default-news.jpg"}
                     alt={news.title}
-                    className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2 line-clamp-2">
-                      {news.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-3">
-                      {news.details?.slice(0, 120)}...
-                    </p>
-                    <Link
-                      to={`/news-details/${news.id}`}
-                      className="text-[#D63460] font-semibold hover:underline mt-auto"
-                    >
-                      Read More →
-                    </Link>
-                  </div>
                 </div>
-              </div>
+                <h3 className="font-bold text-sm md:text-base line-clamp-3 group-hover:underline mb-1 md:mb-2">
+                  {news.title}
+                </h3>
+                <p className="text-xs text-gray-600 line-clamp-2 flex-1 mb-2">
+                  {news.details?.slice(0, 80)}...
+                </p>
+                <p className="text-xs text-gray-500">
+                  {new Date(news.author?.published_date).toLocaleDateString()}
+                </p>
+              </Link>
             ))}
           </div>
-
-          {/* Carousel Controls */}
-          <button
-            onClick={prevSlide}
-            className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
-          >
-            ❮
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute top-1/2 right-2 sm:right-4 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
-          >
-            ❯
-          </button>
         </div>
-      </section>
 
-      {/* Trending News */}
-      <section className="py-8 px-4 sm:px-6 max-w-6xl mx-auto mt-8 space-y-6">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-center text-[#D63460]">
-          Trending News
-        </h2>
-        {featuredNews.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            {featuredNews.map((news) => (
-              <div
+        {/* DIVIDER */}
+        <div className="border-t-2 border-gray-300 my-6 md:my-8"></div>
+
+        {/* MORE STORIES - STACKED */}
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-4">More Stories</h2>
+          <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
+            {latestNews.slice(8, 14).map((news) => (
+              <Link
                 key={news.id}
-                className="flex flex-col sm:flex-row bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition"
+                to={`/news-details/${news.id}`}
+                className="group flex gap-3 md:gap-4 pb-4 md:pb-0 border-b md:border-b-0 last:border-b-0 hover:opacity-75 transition"
               >
                 <img
                   src={news.thumbnail_url || news.image_url || "/default-news.jpg"}
                   alt={news.title}
-                  className="w-full sm:w-1/3 h-48 sm:h-56 md:h-64 lg:h-72 object-cover"
+                  className="w-24 md:w-40 h-20 md:h-32 object-cover rounded flex-shrink-0 group-hover:scale-105 transition duration-300"
                 />
-                <div className="p-4 sm:p-6 flex-1 flex flex-col justify-between">
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2 line-clamp-2">
-                    {news.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-3">
-                    {news.details?.slice(0, 150)}...
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-bold text-sm md:text-base line-clamp-2 group-hover:underline mb-1">
+                      {news.title}
+                    </h3>
+                    <p className="text-xs text-gray-600 line-clamp-2">
+                      {news.details?.slice(0, 100)}...
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {new Date(news.author?.published_date).toLocaleDateString()}
                   </p>
-                  <Link
-                    to={`/news-details/${news.id}`}
-                    className="text-[#D63460] font-semibold hover:underline mt-auto"
-                  >
-                    Read More →
-                  </Link>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
-        ) : (
-          <p className="text-center text-gray-500">No trending news available.</p>
-        )}
-      </section>
-
-      {/* Categories */}
-      <section className="py-12 px-4 sm:px-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-8 text-center text-[#D63460]">
-          Explore Categories
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {[
-            { name: "Politics", color: "#FAD6DE" },
-            { name: "Sports", color: "#D63460" },
-            { name: "Technology", color: "#FAD6DE" },
-            { name: "Entertainment", color: "#D63460" },
-          ].map((cat, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-xl shadow text-center font-semibold cursor-pointer hover:scale-105 transition"
-              style={{ backgroundColor: cat.color }}
-            >
-              {cat.name}
-            </div>
-          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6 text-center mt-10">
-        <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
+      {/* FOOTER */}
+      <footer className="bg-gray-900 text-white py-8 md:py-12 px-3 md:px-6 mt-8 md:mt-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-6 md:mb-8">
+            <div>
+              <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">News Today</h3>
+              <p className="text-xs md:text-sm text-gray-400">
+                Your trusted source for authentic, unbiased news.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-sm md:text-base">Quick Links</h4>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-400">
+                <li><Link to="/" className="hover:text-white transition">Home</Link></li>
+                <li><Link to="/about" className="hover:text-white transition">About</Link></li>
+                <li><Link to="/career" className="hover:text-white transition">Careers</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-sm md:text-base">Categories</h4>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-gray-400">
+                <li><a href="#" className="hover:text-white transition">Breaking</a></li>
+                <li><a href="#" className="hover:text-white transition">Tech</a></li>
+                <li><a href="#" className="hover:text-white transition">Sports</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-sm md:text-base">Follow Us</h4>
+              <div className="flex gap-2">
+                <a href="#" className="w-8 h-8 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition text-sm">f</a>
+                <a href="#" className="w-8 h-8 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition text-sm">𝕏</a>
+                <a href="#" className="w-8 h-8 md:w-10 md:h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-white hover:text-black transition text-sm">📷</a>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 pt-6 md:pt-8 text-center text-xs md:text-sm text-gray-400">
+            <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
