@@ -8,37 +8,36 @@ const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true)
 
-  console.log(user, loading);
-
-  const createUser =(email, password)=>{
+  const createUser = (email, password) => {
     setLoading(true)
     return createUserWithEmailAndPassword(auth, email, password)
   };
 
-  const signIn = (email, password)=>{
+  const signIn = (email, password) => {
     setLoading(true)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
-  const updateUser =(updatedData)=>{
+  const updateUser = (updatedData) => {
     return updateProfile(auth.currentUser, updatedData)
   }
 
-  const logOut = ()=>{
+  const logOut = () => {
+    setLoading(true)
     return signOut(auth)
   }
 
-  useEffect(()=>{
-    const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false)
     });
-    return ()=>{
+    return () => {
       unsubscribe();
     }
   }, [])
 
-  const authData ={
+  const authData = {
      user,
      setUser,
      createUser,
@@ -48,9 +47,9 @@ const AuthProvider = ({children}) => {
      setLoading,
      updateUser,
   }
-  return <AuthContext value={authData}>
+  return <AuthContext.Provider value={authData}>
     {children}
-  </AuthContext>;
+  </AuthContext.Provider>;
 };
 
 export default AuthProvider;

@@ -1,23 +1,20 @@
-import React, { use, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import { toast } from "react-toastify";
 
 const Register = () => {
 
-  const {createUser, setUser, updateUser} = use(AuthContext)
-  const [nameError, setNameError]= useState("")
+  const { createUser, setUser, updateUser } = useContext(AuthContext)
+  const [nameError, setNameError] = useState("")
 
   const navigate = useNavigate();
 
-  const haldleRegister = (event) => {
-
-
+  const handleRegister = (event) => {
     event.preventDefault();
-    // console.log(event.target);
     const name = event.target.name.value;
-    if(name.length<5){
-      setNameError("Name should be then 5 character")
+    if(name.length < 5){
+      setNameError("Name should be at least 5 characters")
       return;
     }
     else{
@@ -28,26 +25,20 @@ const Register = () => {
     const password = event.target.password.value;
 
     createUser(email, password)
-    .then(result=>{
-      // console.log(result.user);
+    .then(result => {
       toast.success("Register Successful✅")
-      updateUser({displayName:name, photoURL: photoURL}).then(()=>{
-        setUser({...result.user, displayName: name, photoURL: photoURL});
-
+      updateUser({ displayName: name, photoURL: photoURL }).then(() => {
+        setUser({ ...result.user, displayName: name, photoURL: photoURL });
         navigate('/')
       })
-      .catch((error)=>{
-        // console.log(error.message);
+      .catch((error) => {
         setUser(error.message)
       })
     })
-    .catch(error=>{
-      // console.log(error.message);
+    .catch(error => {
       toast.error(error.message)
       setUser(error.message)
     })
-
-    // console.log("Data", { name, photoURL, email, password });
   };
 
   return (
@@ -56,7 +47,7 @@ const Register = () => {
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <div className="card-body">
             <h1 className="text-[47px] font-bold">Register Now!</h1>
-            <form onSubmit={haldleRegister}>
+            <form onSubmit={handleRegister}>
               <fieldset className="fieldset">
                 {/* Name */}
                 <label className="label">Your Name</label>

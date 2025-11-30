@@ -1,16 +1,10 @@
 
 import './App.css'
+import { RouterProvider } from 'react-router-dom'
+import router from './Routes/Router.jsx'
 
 function App() {
-
-
-  return (
-    <>
-     
-      <h1 className='text-4xl font-bold text-center mt-10'>Today News</h1>
-      
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

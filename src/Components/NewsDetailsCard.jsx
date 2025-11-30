@@ -1,5 +1,5 @@
 import { FaArrowLeft, FaEye, FaStar } from "react-icons/fa";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const NewsDetailsCard = ({ news }) => {
   const navigate = useNavigate();
@@ -15,7 +15,17 @@ const NewsDetailsCard = ({ news }) => {
   } = news;
 
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all p-4">
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+      {/* Top Bar with Back Button */}
+      <div className="flex items-center gap-3 p-3 border-b primary-bg">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-white hover:text-white/90 transition-colors"
+        >
+          <FaArrowLeft className="text-lg" />
+          <span className="text-sm font-medium">Back to news list</span>
+        </button>
+      </div>
 
       {/* Thumbnail */}
       <img
@@ -59,7 +69,7 @@ const NewsDetailsCard = ({ news }) => {
           {tags?.map((tag, i) => (
             <span
               key={i}
-              className="bg-blue-50 text-blue-600 text-xs font-medium px-3 py-1 rounded-full"
+              className="accent-bg primary-text text-xs font-medium px-3 py-1 rounded-full"
             >
               #{tag}
             </span>
@@ -68,7 +78,7 @@ const NewsDetailsCard = ({ news }) => {
 
         {/* Footer Section */}
         <div className="flex items-center justify-between border-t pt-3">
-          <div className="flex items-center gap-1 text-yellow-500">
+          <div className="flex items-center gap-1 primary-text">
             {[...Array(Math.round(rating?.number || 0))].map((_, i) => (
               <FaStar key={i} />
             ))}
@@ -82,16 +92,6 @@ const NewsDetailsCard = ({ news }) => {
             <span className="text-sm">{total_view?.toLocaleString()} views</span>
           </div>
         </div>
-      </div>
-      {/* Top Bar with Back Button */}
-      <div className="flex items-center w-fit gap-3 p-3 border-b bg-secondary">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-white hover:text-green-400 transition-colors"
-        >
-          <FaArrowLeft className="text-lg" />
-          <span className="text-sm font-medium">All news in this category</span>
-        </button>
       </div>
     </div>
   );

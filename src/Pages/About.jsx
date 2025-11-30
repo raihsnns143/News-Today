@@ -26,12 +26,9 @@ const About = () => {
   ];
 
   return (
-    <div className="bg-gray-50 text-gray-800 mt-10">
+    <div className="bg-white text-black mt-10">
       {/* Hero Section */}
-      <section
-        className="text-white py-20 text-center"
-        style={{ background: "linear-gradient(to right, #D63460, #D63460)" }}
-      >
+      <section className="primary-bg py-20 text-center">
         <div className="max-w-3xl mx-auto px-6">
           <h1 className="text-5xl font-bold mb-4">About News Today</h1>
           <p className="text-lg leading-relaxed">
@@ -45,7 +42,7 @@ const About = () => {
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-semibold mb-4" style={{ color: "#D63460" }}>
+            <h2 className="text-3xl font-semibold mb-4 text-black">
               Our Mission
             </h2>
             <p className="text-gray-700 leading-relaxed">
@@ -55,7 +52,7 @@ const About = () => {
             </p>
           </div>
           <div>
-            <h2 className="text-3xl font-semibold mb-4" style={{ color: "#D63460" }}>
+            <h2 className="text-3xl font-semibold mb-4 text-black">
               Our Vision
             </h2>
             <p className="text-gray-700 leading-relaxed">
@@ -70,16 +67,13 @@ const About = () => {
       {/* Why Choose Us */}
       <section className="bg-white py-16 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold mb-8" style={{ color: "#D63460" }}>
+          <h2 className="text-3xl font-semibold mb-8 text-black">
             Why Choose News Today?
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((item, i) => (
-              <div
-                key={i}
-                className="p-6 bg-gray-100 rounded-xl shadow hover:shadow-lg transition duration-300"
-              >
-                <p className="text-gray-800 font-medium">{item}</p>
+              <div key={i} className="p-6 accent-bg rounded-xl shadow hover:shadow-lg transition duration-300">
+                <p className="text-black font-medium">{item}</p>
               </div>
             ))}
           </div>
@@ -87,21 +81,15 @@ const About = () => {
       </section>
 
       {/* Our Team */}
-      <section
-        className="py-16 px-6 transition-colors duration-300"
-        style={{ backgroundColor: "#FAD6DE" }} // Light shade of #D63460
-      >
+      <section className="py-16 px-6 transition-colors duration-300 section-bg">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold mb-10" style={{ color: "#D63460" }}>
+          <h2 className="text-3xl font-semibold mb-10 text-black">
             Meet Our Editorial Team
           </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, i) => (
-              <div
-                key={i}
-                className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition-colors duration-300"
-              >
+              <div key={i} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition-colors duration-300">
                 <div className="w-24 h-24 mx-auto mb-4 relative">
                   <img
                     src={member.image}
@@ -121,24 +109,21 @@ const About = () => {
       </section>
 
       {/* Contact Section */}
-      <section
-        className="py-16 text-center text-white"
-        style={{ background: "linear-gradient(to right, #D63460, #D63460)" }}
-      >
+      <section className="py-16 text-center primary-bg">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-3xl font-semibold mb-4">Want to Share Your Story?</h2>
           <p className="text-lg mb-6">
             Contact our editorial team to publish your authentic news and
             inspiring stories.
           </p>
-          <button onClick={() => setShowContactModal(true)} className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+          <button onClick={() => setShowContactModal(true)} className="btn-primary px-6 py-3 rounded-lg font-semibold">
             Contact Us
           </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6 text-center">
+      <footer className="bg-white text-black py-6 text-center border-t">
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
 
@@ -146,7 +131,7 @@ const About = () => {
       {showContactModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
           <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
-            <h2 className="text-2xl font-semibold mb-4" style={{ color: "#D63460" }}>
+            <h2 className="text-2xl font-semibold mb-4" style={{ color: "#000000" }}>
               Contact Us
             </h2>
             <form onSubmit={handleContactSubmit} className="space-y-4">
@@ -174,10 +159,7 @@ const About = () => {
                 placeholder="Your Message"
                 required
               ></textarea>
-              <button
-                type="submit"
-                className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
-              >
+              <button type="submit" className="btn-primary w-full py-3 rounded-lg font-semibold">
                 Send Message
               </button>
             </form>

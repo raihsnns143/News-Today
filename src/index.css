@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 
 @import "tailwindcss";
@@ -9,17 +9,98 @@
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
-    --color-primary: #403F3F;
-    --color-secondary: #D72050;
-    --color-base-200: #F3F3F3;
-    --color-base-300: #E7E7E7;
-    --color-accent: #706F6F;
+    --color-primary: #0F172A;
+    --color-secondary: #0F172A;
+    --color-base-200: #F8FAFC;
+    --color-base-300: #e8e8e8;
+    --color-accent: #06B6D4;
+    --color-text: #FFFFFF;
 }
 
 * {
-    font-family: "Poppins", sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
+/* Professional Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+body {
+    background-color: #0F172A;
+    color: #FFFFFF;
+    line-height: 1.6;
+}
+
+/* Smooth transitions */
+a, button {
+    transition: all 0.3s ease;
+}
+
+/* Article links */
+a {
+    color: #000000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #333333;
+    text-decoration: underline;
+}
+
+/* Professional borders */
+.border-professional {
+    border-color: #d9d9d9;
+}
+
+/* Shadow utilities */
+.shadow-professional {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-professional-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Accent color */
+.accent-bg {
+    background-color: #06B6D4;
+}
+
+.accent-text {
+    color: #06B6D4;
+}
+
+/* Active nav link */
 a.active{
-    @apply bg-secondary text-white rounded-md p-1
+    background-color: #06B6D4;
+    color: #FFFFFF;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.75rem;
+}
+
+/* Section background */
+.section-bg {
+    background-color: #F8FAFC;
+}
+
+/* Primary color utilities */
+.primary-bg {
+    background-color: #0F172A;
+}
+
+.primary-text {
+    color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #0F172A;
+    color: #FFFFFF;
+    border-radius: 0.375rem;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.95);
 }

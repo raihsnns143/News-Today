@@ -20,36 +20,29 @@ const Categories = () => {
   }, []);
 
   if (!categories || categories.length === 0) {
-    return (
-      <div className="bg-white p-4 rounded-xl shadow">
-        <h3 className="font-bold text-lg mb-4">All Categories</h3>
-        <div className="text-sm text-gray-500">Loading...</div>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow">
-      <h3 className="font-bold text-lg mb-4">All Categories</h3>
-
-      <nav aria-label="News categories">
-        {/* mobile: horizontal scroll of compact "pills"; md+: stacked full-width buttons (old style) */}
-        <div className="flex md:block gap-2 overflow-x-auto md:overflow-visible px-2 -mx-2 md:mx-0">
-          {categories.map((category) => (
-            <NavLink
-              key={category.id}
-              to={`/category/${category.id}`}
-              className={({ isActive }) =>
-                `min-w-max flex-shrink-0 inline-block whitespace-nowrap px-4 py-2 transition-colors
-                 ${isActive ? "bg-accent text-white" : "bg-base-100 hover:bg-base-200 text-accent"}
-                 rounded-full md:rounded-md md:w-full text-left`
-              }
-            >
-              {category.name}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
+    <div className="py-6 border-b border-gray-300 mb-8">
+      <h3 className="text-xs uppercase font-bold text-gray-500 tracking-wider mb-4">Categories</h3>
+      <div className="flex gap-3 overflow-x-auto pb-2 scroll-smooth">
+        {categories.map((category) => (
+          <NavLink
+            key={category.id}
+            to={`/category/${category.id}`}
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
+                isActive 
+                  ? 'bg-[#000000] text-white shadow-professional' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`
+            }
+          >
+            {category.name}
+          </NavLink>
+        ))}
+      </div>
     </div>
   );
 };

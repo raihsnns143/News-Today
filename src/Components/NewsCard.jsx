@@ -15,36 +15,36 @@ const NewsCard = ({ news }) => {
   const stars = Array.from({ length: Math.round(number) }, (_, i) => i);
 
   return (
-    <div className="card bg-white shadow-md border rounded-xl overflow-hidden transition hover:shadow-xl">
+    <div className="card bg-white border border-gray-200 rounded-lg overflow-hidden transition-all hover:shadow-professional-lg hover:-translate-y-1 duration-300">
 
       {/* --- Author Info --- */}
-      <div className="flex justify-between items-center p-3 bg-gray-100">
+      <div className="flex justify-between items-center p-4 section-bg border-b border-gray-200">
         <div className="flex items-center gap-3">
           <img
             src={img}
             alt={name}
-            className="w-10 h-10 rounded-full object-cover"
+            className="w-10 h-10 rounded-full object-cover border border-gray-300"
           />
           <div>
             <h2 className="font-semibold text-gray-800 text-sm">{name}</h2>
             <p className="text-xs text-gray-500">
-              {new Date(published_date).toDateString()}
+              {new Date(published_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             </p>
           </div>
         </div>
 
-        <button className="flex gap-2 text-xl text-gray-700 pr-2">
-          <CiBookmark className="cursor-pointer" />
-          <IoShareSocialOutline className="cursor-pointer" />
-        </button>
+        <div className="flex gap-2 text-lg text-gray-600">
+          <CiBookmark className="cursor-pointer hover:text-black transition" />
+          <IoShareSocialOutline className="cursor-pointer hover:text-black transition" />
+        </div>
       </div>
 
       {/* Thumbnail */}
-      <figure className="w-full">
+      <figure className="w-full overflow-hidden bg-gray-300 h-48">
         <img
           src={thumbnail_url}
           alt={title}
-          className="w-full h-48 sm:h-56 md:h-52 object-cover"
+          className="w-full h-full object-cover hover:scale-105 transition duration-500"
         />
       </figure>
 
@@ -52,50 +52,52 @@ const NewsCard = ({ news }) => {
       <div className="p-4">
 
         {/* Title */}
-        <h2 className="text-lg font-bold text-gray-900 leading-snug mb-2">
+        <h2 className="text-lg font-bold text-gray-900 leading-snug mb-2 line-clamp-2 hover:text-[#000000] transition">
           {title}
           {badge && (
-            <span className="badge badge-secondary ml-2 capitalize">
+            <span className="badge ml-2 capitalize text-xs primary-text" style={{backgroundColor:'#F4F4F4', color:'#C9A227'}}>
               {badge}
             </span>
           )}
         </h2>
 
         {/* Details */}
-        <p className="text-gray-600 text-sm">
-          {seeMore ? details : details.slice(0, 160) + " "}
-          <button
+        <p className="text-gray-700 text-sm line-clamp-2 mb-3">
+          {seeMore ? details : details.slice(0, 120) + " "}
+            <button
             onClick={() => setSeeMore(!seeMore)}
-            className="text-blue-600 font-medium hover:underline"
+            className="text-black font-semibold hover:underline"
           >
-            {seeMore ? "See Less" : "See More"}
+            {seeMore ? "Less" : "More"}
           </button>
         </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {tags?.map((tag, i) => (
-            <span key={i} className="badge badge-outline text-xs">
+        <div className="flex flex-wrap gap-2 mt-3 mb-3">
+          {tags?.slice(0, 3).map((tag, i) => (
+            <span key={i} className="text-xs px-2 py-1 rounded-full accent-bg primary-text">
               #{tag}
             </span>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center mt-4 border-t pt-3 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="flex text-yellow-500 text-sm">
+        <div className="flex justify-between items-center border-t border-gray-200 pt-3 text-sm">
+          <div className="flex items-center gap-1">
+            <div className="flex primary-text text-xs">
               {stars.map((_, i) => (
                 <FaStar key={i} />
               ))}
             </div>
-            <span>{number}</span>
+            <span className="text-gray-700 font-semibold ml-1">{number}</span>
           </div>
 
-          <div className="flex items-center gap-1 text-gray-600">
-            <FaEye />
-            <span>{total_view}</span>
-          </div>
+          <Link
+            to={`/news-details/${id}`}
+            className="font-semibold hover:text-gray-900 transition primary-text"
+          >
+            Read More →
+          </Link>
         </div>
       </div>
     </div>

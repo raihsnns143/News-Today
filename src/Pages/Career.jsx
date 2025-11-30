@@ -14,13 +14,10 @@ const Career = () => {
   ];
 
   return (
-    <div className="bg-gray-50 text-gray-800 mt-10">
+    <div className="bg-white text-black mt-10">
 
       {/* Hero */}
-      <section
-        className="text-white py-20 text-center"
-        style={{ background: "linear-gradient(to right, #D63460, #D63460)" }}
-      >
+      <section className="primary-bg py-20 text-center">
         <div className="max-w-3xl mx-auto px-6">
           <h1 className="text-5xl font-bold mb-4">Build Your Future With Us</h1>
           <p className="text-lg leading-relaxed">
@@ -31,7 +28,7 @@ const Career = () => {
 
       {/* Why Work With Us */}
       <section className="py-16 px-6 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold mb-8" style={{ color: "#D63460" }}>
+        <h2 className="text-3xl font-semibold mb-8 text-black">
           Why Work At News Today?
         </h2>
 
@@ -51,14 +48,14 @@ const Career = () => {
       {/* Open Positions */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold mb-10 text-center" style={{ color: "#D63460" }}>
+          <h2 className="text-3xl font-semibold mb-10 text-center text-black">
             Open Positions
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8">
             {jobs.map((job, index) => (
               <div key={index} className="p-6 border rounded-xl shadow-sm hover:shadow-md transition">
-                <h3 className="text-xl font-semibold mb-2" style={{ color: "#D63460" }}>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: "#000000" }}>
                   {job.role}
                 </h3>
                 <p className="text-gray-700 text-sm">
@@ -67,7 +64,7 @@ const Career = () => {
 
                 <button
                   onClick={() => { setSelectedJob(job.role); setOpen(true); }}
-                  className="mt-4 bg-[#D63460] text-white px-4 py-2 rounded-md hover:opacity-90 transition"
+                  className="mt-4 btn-primary px-4 py-2 rounded-md transition"
                 >
                   Apply Now
                 </button>
@@ -78,20 +75,17 @@ const Career = () => {
       </section>
 
       {/* call to action final */}
-      <section
-        className="py-16 text-center text-white"
-        style={{ background: "linear-gradient(to right, #D63460, #D63460)" }}
-      >
-        <h2 className="text-3xl font-semibold mb-4">Didn’t find a role matching you?</h2>
+      <section className="py-16 text-center primary-bg">
+        <h2 className="text-3xl font-semibold mb-4">Didn't find a role matching you?</h2>
         <p className="mb-6">Send your CV — we always welcome talented people.</p>
 
-        <button onClick={() => setCvOpen(true)} className="bg-white text-[#D63460] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+        <button onClick={() => setCvOpen(true)} className="btn-primary px-6 py-3 rounded-lg font-semibold">
           Send CV
         </button>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-6 text-center">
+      <footer className="bg-white text-black py-6 text-center border-t">
         <p>© {new Date().getFullYear()} News Today. All rights reserved.</p>
       </footer>
 
@@ -101,7 +95,7 @@ const Career = () => {
           <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
             <h2
               className="text-2xl font-semibold mb-4"
-              style={{ color: "#D63460" }}
+              style={{ color: "#000000" }}
             >
               Apply For {selectedJob}
             </h2>
@@ -130,10 +124,7 @@ const Career = () => {
               ></textarea>
               <input type="file" className="w-full border p-3 rounded" required />
 
-              <button
-                type="submit"
-                className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
-              >
+              <button type="submit" className="btn-primary w-full py-3 rounded-lg font-semibold">
                 Submit Application
               </button>
             </form>
@@ -154,7 +145,7 @@ const Career = () => {
           <div className="bg-white p-8 rounded-xl w-[90%] md:w-[500px] relative">
             <h2
               className="text-2xl font-semibold mb-4"
-              style={{ color: "#D63460" }}
+              style={{ color: "#000000" }}
             >
               Send Your CV
             </h2>
@@ -185,7 +176,7 @@ const Career = () => {
 
               <button
                 type="submit"
-                className="bg-[#D63460] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
+                className="bg-[#000000] w-full text-white py-3 rounded-lg font-semibold hover:opacity-90"
               >
                 Send CV
               </button>

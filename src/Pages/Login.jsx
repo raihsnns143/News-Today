@@ -1,45 +1,41 @@
-import React, { use, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import React, { useContext, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import { toast } from "react-toastify";
 
 const Login = () => {
 
-  const [error, setError]=useState("")
+  const [error, setError] = useState("")
 
-  const {signIn} = use(AuthContext)
+  const { signIn } = useContext(AuthContext)
 
   const location = useLocation();
   const navigate = useNavigate()
-  // console.log(location);
 
-  const haldldeLogin = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
 
     const email = event.target.email.value;
     const password = event.target.password.value
 
     signIn(email, password)
-    .then(result=>{
-      // console.log(result.user);
+    .then(result => {
       toast.success("Login Successfully✅")
-      navigate(`${location.state? location.state : "/"}`)
+      navigate(`${location.state ? location.state : "/"}`)
     })
-    .catch(error=>{
+    .catch(error => {
       toast.error(error.message)
       setError(error.code)
     })
-
-    console.log({email, password});
   };
 
   return (
     <div>
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="card bg-white w-full max-w-sm shrink-0 shadow-2xl border border-gray-200">
           <div className="card-body">
             <h1 className="text-5xl font-bold">Login now!</h1>
-            <form onSubmit={haldldeLogin}>
+            <form onSubmit={handleLogin}>
               <fieldset className="fieldset">
                 {/* Email */}
                 <label className="label">Email</label>
@@ -65,12 +61,12 @@ const Login = () => {
                 {
                   error && <p className="text-red-500 text-xs">{error}</p>
                 }
-                <button className="btn btn-neutral mt-4">Login</button>
-                <p className="text-center">
-                  Dont’t Have An Account ?{" "}
+                <button className="btn btn-primary mt-4 w-full py-2">Login</button>
+                <p className="text-center mt-4">
+                  Dont't Have An Account ?{" "}
                   <Link
                     to="/auth/register"
-                    className="text-blue-500 hover:underline"
+                    className="text-sky-500 hover:text-sky-600 font-bold underline"
                   >
                     Register
                   </Link>

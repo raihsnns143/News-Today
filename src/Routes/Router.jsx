@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../Layouts/RootLayout";
 import Home from "../Pages/Home";
 import CategoryNews from "../Pages/CategoryNews";
@@ -10,6 +10,10 @@ import AuthLayout from "../Layouts/AuthLayout";
 import NewsDetails from "../Pages/NewsDetails";
 import PrivateRoute from "../Provider/PrivateRoute";
 import Loading from "../Pages/Loading";
+import TermsOfService from "../Pages/TermsOfService";
+import PrivacyPolicy from "../Pages/PrivacyPolicy";
+import CookiesPolicy from "../Pages/CookiesPolicy";
+import ContactUs from "../Pages/ContactUs";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +31,22 @@ const router = createBrowserRouter([
       {
         path: "/career",
         Component: Career,
+      },
+      {
+        path: "/terms-of-service",
+        Component: TermsOfService,
+      },
+      {
+        path: "/privacy-policy",
+        Component: PrivacyPolicy,
+      },
+      {
+        path: "/cookies-policy",
+        Component: CookiesPolicy,
+      },
+      {
+        path: "/contact-us",
+        Component: ContactUs,
       },
       {
         path: "/category/:id",
