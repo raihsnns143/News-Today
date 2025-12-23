@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import userImg from "../assets/user.png";
-import { AuthContext } from "../Provider/AuthProvider";
+import { AuthContext } from "../Provider/AuthContext";
 
 const Header = () => {
   const { user, logOut } = useContext(AuthContext);
@@ -27,7 +27,7 @@ const Header = () => {
   }, [menuOpen]);
 
   const handleLogout = () => {
-    logOut().catch((err) => {
+    logOut().catch(() => {
       // Handle error silently or show toast
     });
     setUserMenuOpen(false);
@@ -49,12 +49,6 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // Debug: log user object to help diagnose avatar issues
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.log("Auth user:", user);
-  }, [user]);
 
   // Handle scroll animation
   useEffect(() => {

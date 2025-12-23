@@ -5,7 +5,7 @@ import { IoShareSocialOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const NewsCard = ({ news }) => {
-  const { id, title, author, rating, total_view, thumbnail_url, details, tags } = news;
+  const { id, title, author, rating, thumbnail_url, details, tags } = news;
 
   const { name, img, published_date } = author;
   const { number, badge } = rating || {};

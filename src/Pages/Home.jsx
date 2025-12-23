@@ -22,14 +22,11 @@ const Home = () => {
     );
   }
 
-  // Find "Dr. Muhammad Yunus" article or use second item as featured
-  const yunosArticleIndex = allNews.findIndex(
-    (news) => news.title === "Dr. Muhammad Yunus Calls for Social Business Initiatives to Combat Poverty"
-  );
-  const featuredNews = yunosArticleIndex !== -1 ? allNews[yunosArticleIndex] : (allNews[1] || allNews[0]);
+  // Use the first news as featured (latest news)
+  const featuredNews = allNews[0];
   
   // Create filtered list excluding featured article
-  const filteredNews = allNews.filter((_, idx) => idx !== yunosArticleIndex);
+  const filteredNews = allNews.slice(1);
   const secondaryNews = filteredNews.slice(0, 3);
   const gridNews = filteredNews.slice(3, 11);
   const moreNews = filteredNews.slice(11, 19);

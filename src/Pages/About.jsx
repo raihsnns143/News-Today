@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 
+import team1 from "../assets/team1.jpg";
+import team2 from "../assets/team2.jpg";
+import team3 from "../assets/team3.jpg";
+import team4 from "../assets/team4.jpg";
+
 const About = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
@@ -12,10 +17,10 @@ const About = () => {
   };
 
   const teamMembers = [
-    { name: "Raihan", role: "Editor-in-Chief", image: "./src/assets/team1.jpg" },
-    { name: "Robiul", role: "Senior Journalist", image: "./src/assets/team2.jpg" },
-    { name: "Fardin", role: "Digital Media Specialist", image: "./src/assets/team3.jpg" },
-    { name: "Alif", role: "Content Strategist", image: "./src/assets/team4.jpg" },
+    { name: "Raihan", role: "Editor-in-Chief", image: team1 },
+    { name: "Robiul", role: "Senior Journalist", image: team2 },
+    { name: "Fardin", role: "Digital Media Specialist", image: team3 },
+    { name: "Alif", role: "Content Strategist", image: team4 },
   ];
 
   const features = [
@@ -42,9 +47,7 @@ const About = () => {
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-semibold mb-4 text-black">
-              Our Mission
-            </h2>
+            <h2 className="text-3xl font-semibold mb-4 text-black">Our Mission</h2>
             <p className="text-gray-700 leading-relaxed">
               To deliver accurate, unbiased, and impactful news that empowers
               people with truth. News Today stands for clarity and credibility,
@@ -52,9 +55,7 @@ const About = () => {
             </p>
           </div>
           <div>
-            <h2 className="text-3xl font-semibold mb-4 text-black">
-              Our Vision
-            </h2>
+            <h2 className="text-3xl font-semibold mb-4 text-black">Our Vision</h2>
             <p className="text-gray-700 leading-relaxed">
               To become the most trusted bilingual digital news platform in
               Bangladesh — connecting people, communities, and the world with
@@ -67,9 +68,7 @@ const About = () => {
       {/* Why Choose Us */}
       <section className="bg-white py-16 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold mb-8 text-black">
-            Why Choose News Today?
-          </h2>
+          <h2 className="text-3xl font-semibold mb-8 text-black">Why Choose News Today?</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((item, i) => (
               <div key={i} className="p-6 accent-bg rounded-xl shadow hover:shadow-lg transition duration-300">
@@ -83,9 +82,7 @@ const About = () => {
       {/* Our Team */}
       <section className="py-16 px-6 transition-colors duration-300 section-bg">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold mb-10 text-black">
-            Meet Our Editorial Team
-          </h2>
+          <h2 className="text-3xl font-semibold mb-10 text-black">Meet Our Editorial Team</h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, i) => (
@@ -98,9 +95,7 @@ const About = () => {
                   />
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {member.name}
-                </h3>
+                <h3 className="text-lg font-semibold text-gray-800">{member.name}</h3>
                 <p className="text-gray-600 text-sm">{member.role}</p>
               </div>
             ))}

@@ -14,6 +14,9 @@ import TermsOfService from "../Pages/TermsOfService";
 import PrivacyPolicy from "../Pages/PrivacyPolicy";
 import CookiesPolicy from "../Pages/CookiesPolicy";
 import ContactUs from "../Pages/ContactUs";
+import AdminApp from "../Admin/AdminApp";
+
+
 
 const router = createBrowserRouter([
   {
@@ -79,6 +82,10 @@ const router = createBrowserRouter([
         <NewsDetails></NewsDetails>
       </PrivateRoute>
     ),
+  },
+  {
+    path: "/admin/*",
+    element: <AdminApp />,
   },
   {
     path: "/*",
